@@ -12,7 +12,7 @@ import os
 st.set_page_config(layout="wide", page_title="Bank Customer Churn Dashboard")
 
 # 💡 한글 깨짐 방지: 시스템에 설치된 나눔고딕 폰트 지정 및 적용
-font_path = '/usr/share/fonts/truetype/nanum/NanumBarunGothic.ttf'
+font_path = '/usr/share/fonts/truetype/nanum/NanumGothic.ttf'
 if os.path.exists(font_path):
     font_name = fm.FontProperties(fname=font_path).get_name()
     plt.rc('font', family=font_name)
@@ -73,7 +73,7 @@ if st.sidebar.button("이탈 여부 예측하기"):
     probability = rf_model.predict_proba(input_data)[0]
     
     st.sidebar.write(f"### 예측 결과: **{prediction}**")
-    st.sidebar.write(f"(확률: 유지 {probability[1]:.2f} / 이탈 {probability[0]:.2f})")
+    st.sidebar.write(f"(확률: 유지 {probability[0]:.2f} / 이탈 {probability[1]:.2f})")
 
 # 메인 화면: 선택된 Card_Category별 분석 대시보드
 filtered_df = df[df['Card_Category'] == selected_card]
