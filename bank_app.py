@@ -105,5 +105,5 @@ ax[1].set_ylabel('평균 거래 금액')
 st.pyplot(fig)
 """
 
-with open('app.py', 'w', encoding='utf-8') as f:
+with open('bank_app.py', 'w', encoding='utf-8') as f:
     f.write(streamlit_code)
