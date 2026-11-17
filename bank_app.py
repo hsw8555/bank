@@ -72,7 +72,7 @@ if st.sidebar.button("이탈 여부 예측하기"):
     probability = rf_model.predict_proba(input_data)[0]
     
     st.sidebar.write(f"### 예측 결과: **{prediction}**")
-    st.sidebar.write(f"(확률: 유지 {probability[1]:.2f} / 이탈 {probability[0]:.2f})")
+    st.sidebar.write(f"(확률: 유지 {probability[0]:.2f} / 이탈 {probability[1]:.2f})")
 
 # 메인 화면: 선택된 Card_Category별 분기 처리 ('전체' 또는 특정 등급)
 if selected_card == '전체':
