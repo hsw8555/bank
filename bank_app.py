@@ -6,6 +6,7 @@ import seaborn as sns
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
 import matplotlib.font_manager as fm
+import koreanize_matplotlib
 import os
 
 # 페이지 레이아웃 설정
