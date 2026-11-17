@@ -6,7 +6,6 @@ import seaborn as sns
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
 import matplotlib.font_manager as fm
-import koreanize_matplotlib
 import os
 
 # 페이지 레이아웃 설정
@@ -15,9 +14,9 @@ st.set_page_config(layout="wide", page_title="Bank Customer Churn Dashboard")
 # 💡 한글 깨짐 방지: 시스템에 설치된 나눔고딕 폰트 지정 및 적용
 font_path = '/usr/share/fonts/truetype/nanum/NanumGothic.ttf'
 if os.path.exists(font_path):
-    font_name = fm.FontProperties(fname=font_path).get_name()
-    plt.rc('font', family=font_name)
-    plt.rcParams['axes.unicode_minus'] = False # 마이너스 기호 깨짐 방지
+    fm.fontManager.addfont(font_path)
+    plt.rcParams['font.family'] = fm.FontProperties(fname=font_path).get_name()
+    plt.rcParams['axes.unicode_minus'] = False
 else:
     # 만약 배포 서버에 나눔 폰트가 없다면 기본 한글 폰트 시스템 무시 경고용
     plt.rc('font', family='sans-serif')
