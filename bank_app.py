@@ -24,7 +24,6 @@ else:
 # 1. 데이터 로드 및 전처리 캐싱
 @st.cache_data
 def load_data():
-    # GitHub 원본 주소에서 직접 데이터를 다운로드하도록 설정하여 경로 에러를 방지합니다.
     url = "https://github.com/hsw8555/bank/raw/main/bank_customer.xlsx"
     df = pd.read_excel(url, sheet_name="bank_customer")
     # 결측치 처리
@@ -51,8 +50,8 @@ st.title("🏦 은행 고객 이탈 분석 및 예측 대시보드")
 # 사이드바: 카드 등급 선택 및 고객 예측 입력
 st.sidebar.header("⚙️ 대시보드 설정 및 예측")
 
-# 6. Card_Category 선택
-card_list = list(df['Card_Category'].unique())
+# 6. Card_Category 선택 ('전체' 옵션 추가)
+card_list = ['전체'] + sorted(list(df['Card_Category'].unique()))
 selected_card = st.sidebar.selectbox("Card Category 선택", card_list)
 
 # 7. 고객 정보 입력에 의한 이탈 여부 예측
@@ -73,13 +72,16 @@ if st.sidebar.button("이탈 여부 예측하기"):
     probability = rf_model.predict_proba(input_data)[0]
     
     st.sidebar.write(f"### 예측 결과: **{prediction}**")
-    st.sidebar.write(f"(확률: 유지 {probability[0]:.2f} / 이탈 {probability[1]:.2f})")
+    st.sidebar.write(f"(확률: 유지 {probability[1]:.2f} / 이탈 {probability[0]:.2f})")
 
-# 메인 화면: 선택된 Card_Category별 분석 대시보드
-filtered_df = df[df['Card_Category'] == selected_card]
+# 메인 화면: 선택된 Card_Category별 분기 처리 ('전체' 또는 특정 등급)
+if selected_card == '전체':
+    filtered_df = df
+else:
+    filtered_df = df[df['Card_Category'] == selected_card]
 
 # 5. KPI 영역
-st.subheader(f"📊 Card Category: {selected_card} 등급 KPI")
+st.subheader(f"📊 Card Category: {selected_card} KPI")
 col1, col2, col3 = st.columns(3)
 
 total_cust = len(filtered_df)
@@ -101,13 +103,13 @@ fig, ax = plt.subplots(1, 2, figsize=(12, 5))
 
 # Total Revolving Balance 평균 비교
 sns.barplot(ax=ax[0], x='Attrition_Flag', y='Total_Revolving_Bal', data=filtered_df, estimator=np.mean, errorbar=None, palette='pastel')
-ax[0].set_title(f'{selected_card} 등급 - Attrition_Flag별 평균 회전 결제 잔액(Revolving Bal)')
+ax[0].set_title(f'{selected_card} - Attrition_Flag별 평균 회전 결제 잔액(Revolving Bal)')
 ax[0].set_xlabel('이탈 여부')
 ax[0].set_ylabel('평균 잔액')
 
 # Total Transaction Amount 평균 비교
 sns.barplot(ax=ax[1], x='Attrition_Flag', y='Total_Trans_Amt', data=filtered_df, estimator=np.mean, errorbar=None, palette='pastel')
-ax[1].set_title(f'{selected_card} 등급 - Attrition_Flag별 평균 거래 금액(Trans Amt)')
+ax[1].set_title(f'{selected_card} - Attrition_Flag별 평균 거래 금액(Trans Amt)')
 ax[1].set_xlabel('이탈 여부')
 ax[1].set_ylabel('평균 거래 금액')
 
