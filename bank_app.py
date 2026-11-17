@@ -1,4 +1,3 @@
-streamlit_code = """
 import streamlit as st
 import pandas as pd
 import numpy as np
@@ -7,17 +6,27 @@ import seaborn as sns
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
 import matplotlib.font_manager as fm
+import os
 
 # 페이지 레이아웃 설정
 st.set_page_config(layout="wide", page_title="Bank Customer Churn Dashboard")
 
-# 한글 폰트 설정 (배포 환경에 따라 나눔고딕 등이 설치되어 있어야 깔끔하게 나옵니다)
-plt.rc('font', family='NanumBarunGothic') 
+# 💡 한글 깨짐 방지: 시스템에 설치된 나눔고딕 폰트 지정 및 적용
+font_path = '/usr/share/fonts/truetype/nanum/NanumBarunGothic.ttf'
+if os.path.exists(font_path):
+    font_name = fm.FontProperties(fname=font_path).get_name()
+    plt.rc('font', family=font_name)
+    plt.rcParams['axes.unicode_minus'] = False # 마이너스 기호 깨짐 방지
+else:
+    # 만약 배포 서버에 나눔 폰트가 없다면 기본 한글 폰트 시스템 무시 경고용
+    plt.rc('font', family='sans-serif')
 
 # 1. 데이터 로드 및 전처리 캐싱
 @st.cache_data
 def load_data():
-    df = pd.read_excel("bank_customer.xlsx", sheet_name="bank_customer")
+    # GitHub 원본 주소에서 직접 데이터를 다운로드하도록 설정하여 경로 에러를 방지합니다.
+    url = "https://github.com/hsw8555/bank/raw/main/bank_customer.xlsx"
+    df = pd.read_excel(url, sheet_name="bank_customer")
     # 결측치 처리
     df['Credit_Limit'] = df['Credit_Limit'].fillna(df['Credit_Limit'].median())
     df['Total_Trans_Amt'] = df['Total_Trans_Amt'].fillna(df['Total_Trans_Amt'].median())
@@ -91,19 +100,15 @@ st.subheader("📈 이탈 여부(Attrition Flag)별 주요 지표 비교")
 fig, ax = plt.subplots(1, 2, figsize=(12, 5))
 
 # Total Revolving Balance 평균 비교
-sns.barplot(ax=ax[0], x='Attrition_Flag', y='Total_Revolving_Bal', data=filtered_df, estimator=np.mean, ci=None, palette='pastel')
+sns.barplot(ax=ax[0], x='Attrition_Flag', y='Total_Revolving_Bal', data=filtered_df, estimator=np.mean, errorbar=None, palette='pastel')
 ax[0].set_title(f'{selected_card} 등급 - Attrition_Flag별 평균 회전 결제 잔액(Revolving Bal)')
 ax[0].set_xlabel('이탈 여부')
 ax[0].set_ylabel('평균 잔액')
 
 # Total Transaction Amount 평균 비교
-sns.barplot(ax=ax[1], x='Attrition_Flag', y='Total_Trans_Amt', data=filtered_df, estimator=np.mean, ci=None, palette='pastel')
+sns.barplot(ax=ax[1], x='Attrition_Flag', y='Total_Trans_Amt', data=filtered_df, estimator=np.mean, errorbar=None, palette='pastel')
 ax[1].set_title(f'{selected_card} 등급 - Attrition_Flag별 평균 거래 금액(Trans Amt)')
 ax[1].set_xlabel('이탈 여부')
 ax[1].set_ylabel('평균 거래 금액')
 
 st.pyplot(fig)
-"""
-
-with open('bank_app.py', 'w', encoding='utf-8') as f:
-    f.write(streamlit_code)
