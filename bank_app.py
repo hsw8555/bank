@@ -11,7 +11,7 @@ import os
 st.set_page_config(layout="wide", page_title="Bank Customer Churn Dashboard")
 
 # 💡 한글 깨짐 방지: 시스템에 설치된 나눔고딕 폰트 지정 및 적용
-font_path = '/usr/share/fonts/truetype/nanum/NanumGothic.ttf'
+font_path = '/fonts/NanumGothic.ttf'
 if os.path.exists(font_path):
     font_name = fm.FontProperties(fname=font_path).get_name()
     plt.rc('font', family=font_name)
